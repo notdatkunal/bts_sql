@@ -25,10 +25,50 @@ public class App
         }
 
     }
-    public static void main( String[] args ) throws Exception {
+
+    public static void main(String[] args) throws Exception {
+        try {
+            System.out.println("hello");
+            String[] files = {
+                    "1-10 list-Vashim.csv",
+                    "1-10 list-Wardha.csv",
+                    "1-10 list-Beed.csv",
+                    "1-10 list-Bhandara.csv",
+                    "1-10 list-Buldhana.csv",
+                    "1-10 list-Jalna.csv",
+                    "1-10 list-nagpur.csv",
+                    "1-10 list-nanded.csv",
+                    "1-10 list-nandurbar.csv",
+                    "1-10 list-palghar.csv",
+                    "1-10 list-parbhani.csv",
+                    "1-10 list-Raigad.csv",
+                    "1-10 list-Thane.csv",
+                    "1-10 list-Yavatmal.csv",
+                    "1-10 list-Aurangabad.csv",
+                    "1-10 list-Chandrapur.csv",
+                    "1-10 list-Jalgaon.csv",
+                    "1-10 list-Gondiya.csv",
+                    "1-10 list-Gadchiroli.csv",
+                    "1-10 list-Osmanabad.csv",
+                    "kolhapur.csv"
+
+            };
+            for (var fileName :
+                    files) {
+                System.out.println(fileName);
+                main2(fileName);
+            }
+
+            System.out.println("document upload enabled");
+        }finally {
+
+            con.close();
+        }
+    }
+    public static void main2( String fileName ) throws Exception {
 
 
-        File f = new File("1-10 list-Solapur.csv");
+        File f = new File(fileName);
         // always keep format of the file in csv
         Scanner sc = new Scanner(f);
         LinkedList<String> list = new LinkedList<String>();
@@ -38,16 +78,19 @@ public class App
             list.add(applicationNumber);
             sc.nextLine();
         }
-        //System.out.println(list);
+        System.out.println(list);
+
+        //following line activates every application document uploading from the list variable
         list.forEach(App::setValues);
+
+
         //System.out.println(f.exists());
 
 //        String applicationNumber =  "SM6946136547";
 //        setValues(applicationNumber);
 
 
-        System.out.println("document upload enabled");
-        con.close();
+
 
 
     }

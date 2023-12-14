@@ -3,6 +3,7 @@ package org.example;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class FarmerDTO {
     private String farmerId;
@@ -22,7 +23,7 @@ public class FarmerDTO {
     private String disability ;
     private String belowPovertyLine ;
     private String education ;
-    private String rationCard ;
+    private Long rationCard ;
     private String bankName ;
     private Long accNumber ;
     private String ifsc ;
@@ -164,11 +165,11 @@ public class FarmerDTO {
         this.education = education;
     }
 
-    public String getRationCard() {
+    public Long getRationCard() {
         return rationCard;
     }
 
-    public void setRationCard(String rationCard) {
+    public void setRationCard(Long rationCard) {
         this.rationCard = rationCard;
     }
 
@@ -207,7 +208,7 @@ public class FarmerDTO {
     public FarmerDTO() {
     }
 
-    public FarmerDTO( Long aadhar, Long age, String firstName, String middleName, String lastName, String gender, Long contact, String email, String district, String taluka, String village, String caste, String casteCertificate, String disability, String belowPovertyLine, String education, String rationCard, String bankName, Long accNumber, String ifsc, String branch) {
+    public FarmerDTO( Long aadhar, Long age, String firstName, String middleName, String lastName, String gender, Long contact, String email, String district, String taluka, String village, String caste, String casteCertificate, String disability, String belowPovertyLine, String education, Long rationCard, String bankName, Long accNumber, String ifsc, String branch) {
 
         this.aadhar = aadhar;
         this.age = age;
@@ -260,20 +261,78 @@ public class FarmerDTO {
                 '}';
     }
 
-    public void update(Connection con) {
+    public void update(Connection con) throws SQLException {
 
         try{
             findFarmer(con);
-            System.out.println("welcome farmer");
-            System.out.println(this.getBelowPovertyLine());
+            System.out.println("updating farmer");
+            System.out.println("farmer id : "+this.farmerId);
+            if(this.farmerId==null){
+                throw new SQLException();
+            }
+            String gen="";
+            Integer cast=Integer.valueOf(0),handi=Integer.valueOf(0),cast_cert = Integer.valueOf(0),bpl = Integer.valueOf(0);
+            cast = 2;
+            if(this.gender!=null)
+            gen=this.gender.equals("स्त्री")? "Female" : "Male";
+            if(this.disability!=null)
+            handi=this.disability.equals("होय")?1:0;
+            if(this.belowPovertyLine!=null)
+            bpl=this.belowPovertyLine.equals("होय")?1:0;
+            if(this.casteCertificate!=null)
+            cast_cert=this.casteCertificate.equals("होय")?1:0;
+            if(this.caste!=null)
+            cast=switch(this.caste){
+                case "सर्वसाधारण"->2;
+                case "अनुसुचीत जाती (S.C.) (एस.सी.) (वि .घ .यो . )"->1;
+                default -> 3;
+            };
             StringBuffer sql = new StringBuffer();
-//            sql.append( "UPDATE farmer"
-//                        +"SET "
-//
-//                        +"WHERE farmer_id='"+this.farmerId+"'");
+            sql.append( "UPDATE farmer ");
+            sql.append("SET ");
+            if(this.age!=null)
+            sql.append("age='"+this.age+"'");
+            if(this.firstName!=null)
+            sql.append(",first_name='"+this.firstName+"'");
+            if(this.middleName!=null)
+            sql.append(",middle_name='"+this.middleName+"'");
+            if(this.lastName!=null)
+            sql.append(",last_name='"+this.lastName+"'");
+            if(this.gender!=null)
+            sql.append(",gender='"+gen+"'");
+            if(this.contact!=null)
+            sql.append(",phone_number='"+this.contact+"'");
+            if(this.email!=null)
+            sql.append(",email_id='" +this.email+"'");
+            // cover up for null safety
+            if(this.caste!=null)
+            sql.append(",caste_id="+cast);
+            if(this.casteCertificate!=null)
+            sql.append(",caste_certificate="+cast_cert);
+            if(this.disability!=null)
+            sql.append(",physical_handicap="+handi);
+            if(this.belowPovertyLine!=null)
+            sql.append(",bpl_card=" +bpl);
+            if(this.education!=null)
+            sql.append(",edu_qualification='"+this.education+"'");
+            if(this.rationCard!=null)
+            sql.append(",ration_number='"+this.rationCard+"'");
+            if(this.bankName!=null)
+            sql.append(",bank_name='"+this.bankName+"'");
+            if(this.accNumber!=null)
+            sql.append(",account_number='"+this.accNumber+"'");
+            if(this.ifsc!=null)
+            sql.append(",ifsc_number='"+this.ifsc+"'");
+            if(this.branch!=null)
+            sql.append(",bank_branch='"+this.branch+"'");
 
+            sql.append("WHERE farmer_id='"+this.farmerId+"' ; ");
 
-
+                Statement statement = con.createStatement();
+                System.out.println(sql);
+                Integer result = statement.executeUpdate(sql.toString());
+                if(result.equals(0))
+                    throw new SQLException();
 
 
         }

@@ -61,7 +61,7 @@ public class ErrorUpdates {
             String disability = getString(row.getCell(14));
             String belowPovertyLine = getString(row.getCell(15));
             String education = getString(row.getCell(16));
-            String rationCard = getString(row.getCell(17));
+            Long rationCard = getLong(row.getCell(17));
             String bankName = getString(row.getCell(18));
             Long accNumber = getLong(row.getCell(19));
             String ifsc = getString(row.getCell(20));
@@ -98,8 +98,14 @@ public class ErrorUpdates {
             con.setAutoCommit(false);
 
 
-            farmers.get(0).update(con);
-           // farmers.forEach(farmer->farmer.update(con));
+//            farmers.get(0).update(con);
+            farmers.forEach(farmer-> {
+                try {
+                    farmer.update(con);
+                } catch (SQLException e) {
+                    System.out.println("farmer update failed for "+farmer.toString());
+                }
+            });
 
 
 
@@ -107,9 +113,10 @@ public class ErrorUpdates {
 
 
 
-        ResultSet result = con.createStatement().executeQuery("select * from farmer LIMIT 10;");
+
         con.commit();
         con.setAutoCommit(true);
+        System.out.println("all farmers updated");
         }
         finally{
 
